@@ -39,7 +39,7 @@ export const Sidebar = () => {
                 <p className="text-slate-500 text-sm">Manage your invoices</p>
             </div>
             <div id="profile" className="px-6 py-4 mb-4">
-                <p className="text-slate-500">Welcome back,</p>
+                <p className="text-slate-500 mb-2">Welcome back,</p>
                 <div className="inline-flex space-x-2 items-center">
                     <span>
                         <Image 

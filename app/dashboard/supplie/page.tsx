@@ -6,19 +6,19 @@ import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Upload } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 type Invoice = {
   id: number
   fileName: string
   date: string
   note: string
-  status: 'Pending' | 'Paid' | 'Cancelled'
 }
 
 const initialInvoices: Invoice[] = [
-  { id: 1, fileName: 'INV-001.pdf', date: '2023-05-01', note: 'Monthly service', status: 'Pending' },
-  { id: 2, fileName: 'INV-002.pdf', date: '2023-05-15', note: 'Equipment purchase', status: 'Paid' },
-  { id: 3, fileName: 'INV-003.pdf', date: '2023-05-30', note: 'Consulting fees', status: 'Cancelled' },
+  { id: 1, fileName: 'INV-001.pdf', date: '2023-05-01', note: 'Monthly service' },
+  { id: 2, fileName: 'INV-002.pdf', date: '2023-05-15', note: 'Equipment purchase' },
+  { id: 3, fileName: 'INV-003.pdf', date: '2023-05-30', note: 'Consulting fees' },
 ]
 
 export default function SuppliersPage() {
@@ -83,35 +83,32 @@ export default function SuppliersPage() {
         </Dialog>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>File Name</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Note</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.id}>
-              <TableCell>{invoice.id}</TableCell>
-              <TableCell>{invoice.fileName}</TableCell>
-              <TableCell>{invoice.date}</TableCell>
-              <TableCell>{invoice.note}</TableCell>
-              <TableCell>
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold
-                  ${invoice.status === 'Pending' ? 'bg-yellow-200 text-yellow-800' :
-                    invoice.status === 'Paid' ? 'bg-green-200 text-green-800' :
-                    'bg-red-200 text-red-800'}`}>
-                  {invoice.status}
-                </span>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>File Name</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Note</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices.map((invoice) => (
+                <TableRow key={invoice.id}>
+                  <TableCell>{invoice.id}</TableCell>
+                  <TableCell>{invoice.fileName}</TableCell>
+                  <TableCell>{invoice.date}</TableCell>
+                  <TableCell>{invoice.note}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }
