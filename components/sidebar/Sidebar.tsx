@@ -10,14 +10,14 @@ const menuItems = [
     {
         path: '/dashboard/company',
         icon: <IoBusinessOutline size={40} />,
-        title: 'Company',
-        subtitle: 'Company Invoice'
+        title: 'Administrativo',
+        subtitle: 'Facturas para el administrativo'
     },
     {
         path: '/dashboard/supplie',
         icon: <IoPeopleOutline size={40} />,
-        title: 'Supplie',
-        subtitle: 'Supplie Invoice'
+        title: 'Empleado',
+        subtitle: 'Facturas para el empleado'
     },
 ]
 
@@ -36,10 +36,10 @@ export const Sidebar = () => {
                     <span>Factura</span>
                     <span className="text-blue-500">Flow</span>.
                 </h1>
-                <p className="text-slate-500 text-sm">Manage your invoices</p>
+                <p className="text-slate-500 text-sm">Controla tus facturas</p>
             </div>
             <div id="profile" className="px-6 py-4 mb-4">
-                <p className="text-slate-500 mb-2">Welcome back,</p>
+                <p className="text-slate-500 mb-2">Bienvenido,</p>
                 <div className="inline-flex space-x-2 items-center">
                     <span>
                         <Image 
