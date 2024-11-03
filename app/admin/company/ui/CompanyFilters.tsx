@@ -16,6 +16,7 @@ export const CompanyFilters = () => {
   // Obtener filtros actuales desde la URL
   const currentName = searchParams.get('name') ?? '';
   const currentStatus = searchParams.get('status') ?? 'todos';
+  const currentPage = searchParams.get('page') ?? 1;
 
   const [nameFilter, setNameFilter] = useState<string>(currentName);
   const [statusFilter, setStatusFilter] = useState<StatusType>(currentStatus as StatusType);
@@ -25,6 +26,7 @@ export const CompanyFilters = () => {
     const params = new URLSearchParams();
     if (name) params.set('name', name);
     if (status !== 'todos') params.set('status', status);
+    if (currentPage !== 1) params.set('page', currentPage);
 
     router.push(`?${params.toString()}`); // Actualiza la URL con los nuevos parámetros
   };

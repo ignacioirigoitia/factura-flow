@@ -6,14 +6,12 @@ import prisma from "@/lib/prisma";
 interface PaginationOptions {
   page?: number;
   take?: number;
-  name?: string;
   activo?: boolean;
 }
 
-export const getPaginatedCompany = async ({ 
+export const getPaginatedEmployee = async ({ 
   page = 1, 
   take = 12,
-  name,
   activo
 }: PaginationOptions) => {
 
@@ -21,40 +19,36 @@ export const getPaginatedCompany = async ({
   if( page < 1 ) page = 1;
 
   try {
-    //1. Get companies
-    const companies = await prisma.company.findMany({
+    //1. Get employees
+    const employees = await prisma.employee.findMany({
       take: take,
       skip: (page - 1) * take,
+      include: {
+        Company: true
+      },
       where: {
-        nombre: {
-          contains: name,
-          mode: 'insensitive'
-        },
         activo: activo
       },
       orderBy: {
-        nombre: 'asc'
+        nombreCompleto: 'asc'
       }
     });
 
     //2. get total pages
-    const totalCount = await prisma.company.count({
-      where: {
-        nombre: {
-          contains: name,
-          mode: 'insensitive'
-        },
-        activo: activo
-      }
+    const totalCount = await prisma.employee.count({
+      where: { activo }
     });
     const totalPages = Math.ceil(totalCount / take);
 
     return {
       currentPage: 1,
       totalPages: totalPages,
-      companies: companies
+      employees: employees.map(x => ({
+        ...x,
+        company: x.Company ?? undefined
+      }))
     }
   } catch (error) {
-    throw new Error('No se pudo cargar las compañias');;
+    throw new Error('No se pudo cargar los empleados');;
   }
 }
