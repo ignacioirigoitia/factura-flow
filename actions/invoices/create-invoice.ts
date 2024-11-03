@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from '@/lib/prisma';
-import { Invoice, Estado, Prisma } from '@prisma/client';
+import { Estado, Prisma } from '@prisma/client';
 
 import * as Yup from 'yup';
 
@@ -40,6 +40,8 @@ export async function createInvoice( invoice: CreateInvoiceBody ) {
         ...data,
         notas: data.notas || null,
         estado: data.estado as Estado || 'PENDIENTE',
+        // TODO: Reemplazar con el ID del usuario autenticado
+        employeeId: '123',
       },
     });
 
@@ -56,6 +58,6 @@ export async function createInvoice( invoice: CreateInvoiceBody ) {
     // En caso de que el error sea desconocido, lo mostramos en consola
     console.error('Error inesperado:', error);
 
-    return { message: 'Ocurrió un error inesperado', code: 'UNKNOWN', ok: false };
+    return { message: 'Ocurrió un error inesperado', code: '400', ok: false };
   }
 }

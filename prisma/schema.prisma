@@ -13,17 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Invoice {
   id              String   @id @default(uuid()) // UUID como ID
-  fechaActual     DateTime @default(now())      // Fecha de creación
-  monto           Float                         // Monto de la factura
-  CAE             String   @unique              // Código CAE
-  fechaDeFactura  DateTime                      // Fecha de la factura
-  numeroDeFactura String   @unique              // Número de factura
-  periodo         String                        // Periodo de facturación
-  estado          Estado   @default(PENDIENTE)  // Estado de la factura
-  notas           String?                       // Notas adicionales
+  fechaActual     DateTime @default(now()) // Fecha de creación
+  monto           Float // Monto de la factura
+  CAE             String   @unique // Código CAE
+  fechaDeFactura  DateTime // Fecha de la factura
+  numeroDeFactura String   @unique // Número de factura
+  periodo         String // Periodo de facturación
+  estado          Estado   @default(PENDIENTE) // Estado de la factura
+  notas           String? // Notas adicionales
+
+  Employee        Employee    @relation(fields: [employeeId], references: [id])
+  employeeId      String
+}
+
+enum Role {
+  admin
+  administrator
+  user
 }
 
 enum Estado {
@@ -31,4 +39,27 @@ enum Estado {
   REGISTRADA
   PAGADA
   CANCELADA
+}
+
+model Company {
+  id     String  @id @default(uuid()) // UUID como ID
+  nombre String // Nombre
+  activo Boolean @default(true) // Estado de la compañía
+
+  Employee Employee[] // Relación 1:N con User
+}
+
+model Employee {
+  id             String  @id @default(uuid()) // UUID como ID
+  nombreCompleto String // Nombre
+  correo         String  @unique // Email
+  telefono       String // Teléfono
+  password       String // Contraseña
+  rol            Role    @default(user) // Rol del usuario
+  activo         Boolean @default(true) // Estado del usuario
+
+  Company        Company?  @relation(fields: [companyId], references: [id]) // Relación 1:1 con Company
+  companyId      String?
+
+  Invoice        Invoice[] // Relación 1:N con Invoice
 }

@@ -1,6 +1,5 @@
 
-import { getPaginatedInvoices } from '@/actions/invoices-pagination'
-
+import { getPaginatedInvoices } from '@/actions';
 import InvoiceHeader from '@/components/company/InvoiceHeader';
 import InvoicesPaginatedGrid from '@/components/company/InvoicesPaginatedTable';
 import { Pagination } from '@/components/pagination/Pagination';

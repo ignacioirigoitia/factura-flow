@@ -1,5 +1,6 @@
-import { processPDF } from "./process-pdf";
+'use server'
 
+import { processPDF } from "./process-pdf";
 
 export const createPdf = async (file: File): Promise<any> => {
   const formData = new FormData();

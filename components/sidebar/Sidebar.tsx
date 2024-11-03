@@ -1,7 +1,7 @@
 
 import Image from 'next/image'
 import React from 'react'
-import { IoBusinessOutline, IoPeopleOutline, IoDocumentTextOutline, IoLogOutOutline } from 'react-icons/io5'
+import { IoBusinessOutline, IoPeopleOutline, IoDocumentTextOutline, IoLogOutOutline, IoPaperPlaneOutline } from 'react-icons/io5'
 
 import { SidebarMenuItem } from './SidebarMenuItem'
 import Link from 'next/link'
@@ -18,6 +18,18 @@ const menuItems = [
         icon: <IoPeopleOutline size={40} />,
         title: 'Empleado',
         subtitle: 'Facturas para el empleado'
+    },
+    {
+        path: '/admin/company',
+        icon: <IoDocumentTextOutline size={40} />,
+        title: 'Consultorios',
+        subtitle: 'Gestion de consultorios'
+    },
+    {
+        path: '/admin/users',
+        icon: <IoPaperPlaneOutline size={40} />,
+        title: 'Usuarios',
+        subtitle: 'Gestion de usuarios'
     },
 ]
 

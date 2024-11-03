@@ -4,16 +4,20 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Button } from "../ui/button"
 import { Upload } from 'lucide-react'
-import { Label } from "../ui/label"
+
 import { cn } from "@/lib/utils"
 import PdfUploader from "../pdf-uploader/PdfUploader"
-import { createPdf } from "@/actions/pdf-actions"
+
 import { obtenerCae, obtenerFechaEmision, obtenerMonto, obtenerPeriodoFacturado, obtenerPuntoDeVentaYCompNro } from "@/utils"
-import { createInvoice } from "@/actions/create-invoice"
+
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import { InvoiceInformation } from "./InvoiceInformation"
+import { createInvoice, createPdf } from "@/actions"
+import { uploadPdfAws } from "@/actions/pdf/upload-pdf-aws"
+import { Label } from "../ui/label"
 
-interface Invoice {
+export interface CreateInvoice {
   notas: null | string;
   monto: null | number;
   CAE: null | string;
@@ -22,7 +26,7 @@ interface Invoice {
   periodo: null | string;
 }
 
-const defaultValues : Invoice = {
+const defaultValues : CreateInvoice = {
   notas: null, 
   monto: null,
   CAE: null,
@@ -34,7 +38,7 @@ const defaultValues : Invoice = {
 export default function InvoiceHeader() {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [newInvoice, setNewInvoice] = useState<Invoice>(defaultValues);
+  const [newInvoice, setNewInvoice] = useState<CreateInvoice>(defaultValues);
   const route = useRouter();
 
   const haveInvoice = newInvoice.monto !== null || 
@@ -74,22 +78,33 @@ export default function InvoiceHeader() {
   }
 
   const onFileChange = async (file: File) => {
-    const resp = await createPdf(file);
-    if(resp){
-      const monto = obtenerMonto(resp);
-      const CAE = obtenerCae(resp);
-      const fechaDeFactura = obtenerFechaEmision(resp);
-      const numeroDeFactura = obtenerPuntoDeVentaYCompNro(resp);
-      const periodo = obtenerPeriodoFacturado(resp);
-      setNewInvoice({
-        notas: newInvoice.notas,
-        monto,
-        CAE,
-        fechaDeFactura,
-        numeroDeFactura,
-        periodo
-      });
-    }
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/upload-pdf', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+    console.log(result)
+    // console.log(pdf)
+    // const resp = await createPdf(file);
+    // if(resp){
+    //   const monto = obtenerMonto(resp);
+    //   const CAE = obtenerCae(resp);
+    //   const fechaDeFactura = obtenerFechaEmision(resp);
+    //   const numeroDeFactura = obtenerPuntoDeVentaYCompNro(resp);
+    //   const periodo = obtenerPeriodoFacturado(resp);
+    //   setNewInvoice({
+    //     notas: newInvoice.notas,
+    //     monto,
+    //     CAE,
+    //     fechaDeFactura,
+    //     numeroDeFactura,
+    //     periodo
+    //   });
+    // }
   }
 
   const nombreEmpleado = '{nombreEmpleado}';
@@ -130,31 +145,7 @@ export default function InvoiceHeader() {
               />
               {
                 haveInvoice && (
-                  <div className="mt-4">
-                    <div className="text-sm font-semibold">Datos de la factura</div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <div className="text-sm">Monto</div>
-                        <div className="text-lg font-semibold">${newInvoice.monto?.toFixed(2)}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm">CAE</div>
-                        <div className="text-lg font-semibold">{newInvoice.CAE}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm">Fecha de Emisión</div>
-                        <div className="text-lg font-semibold">{newInvoice.fechaDeFactura?.toLocaleDateString('es')}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm">Nro de Factura</div>
-                        <div className="text-lg font-semibold">{newInvoice.numeroDeFactura}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm">Periodo</div>
-                        <div className="text-lg font-semibold">{newInvoice.periodo}</div>
-                      </div>
-                    </div>
-                  </div>
+                  <InvoiceInformation newInvoice={newInvoice} />
                 )
               }
             </div>

@@ -2,7 +2,7 @@
 
 import pdfParse from "pdf-parse/lib/pdf-parse";
 
-export async function processPDF(data: FormData) { 
+export const processPDF = async (data: FormData) => { 
 
   const file = data.get("file") as File;
 
