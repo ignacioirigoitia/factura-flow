@@ -4,13 +4,36 @@ import { UsersDataGrid } from "./ui/UsersDataGrid"
 import { UsersHeader } from "./ui/UsersHeader"
 import { Pagination } from "@/components/pagination/Pagination";
 
+interface CompanyManagementProps {
+  searchParams: {
+    page?: string;
+    company?: string;
+    status?: string;
+    name?: string;
+    email?: string;
+  };
+}
 
-export default async function UserManagement() {
+export default async function UserManagement({ searchParams }: CompanyManagementProps) {
+
+  const company = searchParams.company ?? undefined;
+  const page = searchParams.page ? parseInt(searchParams.page) : 1;
+  const name = searchParams.name ?? undefined;
+  const correo = searchParams.email ?? undefined;
+  const status = searchParams.status === "activo" 
+    ? true 
+    : searchParams.status === "inactivo" 
+      ? false 
+      : undefined;
 
   const { companies } = await getAllCompanies();
   const { employees, totalPages } = await getPaginatedEmployee({
-    page: 1,
-    take: 12
+    page: page,
+    take: 12,
+    companyId: company,
+    activo: status,
+    nombreCompleto: name,
+    email: correo
   });
 
   return (

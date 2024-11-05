@@ -1,42 +1,47 @@
 'use server';
 
-export const uploadPdfAws = async (file: File) => {
-  const apiUrl = process.env.API_URL_AWS ?? '';
-  const apiKey = process.env.API_KEY_URL ?? '';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-  // Crear un objeto FormData para enviar el archivo
-  const formData = new FormData();
-  formData.append('file', file, file.name);
+const s3Client = new S3Client({
+  region: process.env.NEXT_AWS_S3_REGION,
+  credentials: {
+    accessKeyId: process.env.NEXT_AWS_S3_ACCESS_KEY_ID ?? '',
+    secretAccessKey: process.env.NEXT_AWS_S3_SECRET_ACCESS_KEY ?? '',
+  },
+});
 
+async function uploadFileToS3(file : Buffer, fileName: string) {
+
+  const params = {
+    Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME,
+    Key: fileName,
+    Body: file,
+    ContentType: "application/pdf",
+  };
+
+  const command = new PutObjectCommand(params);
   try {
-    // Realizar la solicitud a la API de AWS
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        // Nota: No es necesario establecer el Content-Type cuando usamos FormData,
-        // ya que el navegador lo maneja automáticamente.
-      },
-      body: formData,
-    });
-
-    // Verificar si la solicitud fue exitosa
-    if (!response.ok) {
-      throw new Error(`Error al subir el archivo: ${response.statusText}`);
-    }
-
-    // Obtener la respuesta de la API
-    const data = await response.json();
-    console.log('Archivo subido exitosamente:', data);
-    return {
-      ok: true,
-      message: 'Archivo subido exitosamente'
-    }
+    await s3Client.send(command);
+    return fileName;
   } catch (error) {
-    console.error('Error en la subida del archivo:', error);
-    return {
-      ok: false,
-      message: 'Error en la subida del archivo'
-    }
+    throw error;
   }
-};
+}
+
+export async function uploadFile(formData: FormData) {
+  try {
+    const file = formData.get("file") as File;
+
+    if (!file) {
+      return { ok: false, message: "Por favor selecciona un archivo" };
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await uploadFileToS3(buffer, file.name);
+
+    return { ok: true, message: "El archivo fue guardado correctamente" };
+  } catch (error) {
+    console.log({error})
+    return { ok: false, message: "Ocurrio un error al subir el archivo" };
+  }
+}

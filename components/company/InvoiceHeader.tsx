@@ -14,7 +14,7 @@ import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
 import { InvoiceInformation } from "./InvoiceInformation"
 import { createInvoice, createPdf } from "@/actions"
-import { uploadPdfAws } from "@/actions/pdf/upload-pdf-aws"
+import { uploadFile } from "@/actions/pdf/upload-pdf-aws"
 import { Label } from "../ui/label"
 
 export interface CreateInvoice {
@@ -80,31 +80,25 @@ export default function InvoiceHeader() {
   const onFileChange = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-
-    const response = await fetch('/api/upload-pdf', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const result = await response.json();
-    console.log(result)
+    // const result = await uploadFile(formData);
+    // console.log(result)
     // console.log(pdf)
-    // const resp = await createPdf(file);
-    // if(resp){
-    //   const monto = obtenerMonto(resp);
-    //   const CAE = obtenerCae(resp);
-    //   const fechaDeFactura = obtenerFechaEmision(resp);
-    //   const numeroDeFactura = obtenerPuntoDeVentaYCompNro(resp);
-    //   const periodo = obtenerPeriodoFacturado(resp);
-    //   setNewInvoice({
-    //     notas: newInvoice.notas,
-    //     monto,
-    //     CAE,
-    //     fechaDeFactura,
-    //     numeroDeFactura,
-    //     periodo
-    //   });
-    // }
+    const resp = await createPdf(file);
+    if(resp){
+      const monto = obtenerMonto(resp);
+      const CAE = obtenerCae(resp);
+      const fechaDeFactura = obtenerFechaEmision(resp);
+      const numeroDeFactura = obtenerPuntoDeVentaYCompNro(resp);
+      const periodo = obtenerPeriodoFacturado(resp);
+      setNewInvoice({
+        notas: newInvoice.notas,
+        monto,
+        CAE,
+        fechaDeFactura,
+        numeroDeFactura,
+        periodo
+      });
+    }
   }
 
   const nombreEmpleado = '{nombreEmpleado}';

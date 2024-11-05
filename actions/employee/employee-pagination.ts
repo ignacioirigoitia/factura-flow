@@ -7,12 +7,18 @@ interface PaginationOptions {
   page?: number;
   take?: number;
   activo?: boolean;
+  companyId?: string;
+  nombreCompleto?: string;
+  email?: string;
 }
 
 export const getPaginatedEmployee = async ({ 
   page = 1, 
   take = 12,
-  activo
+  activo,
+  companyId,
+  nombreCompleto,
+  email
 }: PaginationOptions) => {
 
   if( isNaN( Number(page)) ) page = 1;
@@ -27,7 +33,16 @@ export const getPaginatedEmployee = async ({
         Company: true
       },
       where: {
-        activo: activo
+        activo: activo,
+        companyId: companyId,
+        nombreCompleto: {
+          contains: nombreCompleto,
+          mode: 'insensitive'
+        },
+        correo: {
+          contains: email,
+          mode: 'insensitive'
+        }
       },
       orderBy: {
         nombreCompleto: 'asc'

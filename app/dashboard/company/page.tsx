@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card"
 import { IoDownload, IoEye } from 'react-icons/io5'
 import Image from 'next/image'
+import { getPdfAws } from '@/actions'
 
 type Order = {
   id: number
@@ -33,6 +34,7 @@ export default function CompanyPage() {
   const [newStatus, setNewStatus] = useState<Order['status'] | ''>('')
   const [statusFilter, setStatusFilter] = useState<Order['status'] | 'All'>('All')
   const [supplierFilter, setSupplierFilter] = useState<string>('All')
+  const [currentPdf, setCurrentPdf] = useState<string | null>(null)
 
   const handleStatusChange = (orderId: number, status: Order['status']) => {
     setSelectedOrder(orders.find(order => order.id === orderId) || null)
@@ -146,7 +148,13 @@ export default function CompanyPage() {
                     </Select>
                   </TableCell>
                   <TableCell>
-                    <button onClick={() => setIsModalFileOpen(order)} className='ml-3'>
+                    <button onClick={async () => {
+                      const resp = await getPdfAws('AGOSTO.pdf')
+                      if(resp.ok && resp.url){
+                        setCurrentPdf(resp.url)
+                        setIsModalFileOpen(order)
+                      }
+                    }} className='ml-3'>
                       <IoEye size={25} />
                     </button>
                   </TableCell>
@@ -184,12 +192,12 @@ export default function CompanyPage() {
             <DialogTitle>File number: {isModalFileOpen?.id}</DialogTitle>
           </DialogHeader>
           <div className="flex justify-center">
-            <Image 
-              src={"https://res.cloudinary.com/dcyx4jnch/image/upload/v1728699140/invoice-preview_page-0001_hxyc92.jpg"}
-              alt='Invoice preview'
-              width={300}
-              height={150}
-            />
+          <embed
+            src={currentPdf!}
+            type="application/pdf"
+            width="400"
+            height="450"
+          />
           </div>
           <DialogFooter>
             <button>

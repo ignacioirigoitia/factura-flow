@@ -5,6 +5,8 @@ export * from './invoices/invoices-pagination';
 
 export * from './pdf/pdf-actions';
 export * from './pdf/process-pdf';
+export * from './pdf/upload-pdf-aws';
+export * from './pdf/get-pdf-aws';
 
 export * from './company/create-company';
 export * from './company/update-company';
