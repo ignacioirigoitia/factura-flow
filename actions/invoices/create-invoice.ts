@@ -17,6 +17,7 @@ const invoiceSchema = Yup.object().shape({
   periodo: Yup.string().required(),
   notas: Yup.string().optional(),
   estado: Yup.mixed().oneOf(estadosValidos, 'Estado no válido'),
+  companyId: Yup.string().required(),
 });
 
 interface CreateInvoiceBody {
@@ -27,6 +28,7 @@ interface CreateInvoiceBody {
   periodo: string;
   notas?: string;
   estado?: Estado;
+  companyId: string;
 }
 
 export async function createInvoice( invoice: CreateInvoiceBody ) {
@@ -51,6 +53,7 @@ export async function createInvoice( invoice: CreateInvoiceBody ) {
         notas: data.notas || null,
         estado: data.estado as Estado || 'PENDIENTE',
         employeeId: user.id,
+        companyId: data.companyId,
       },
     });
 

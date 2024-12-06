@@ -1,12 +1,12 @@
-import { Invoice } from "@prisma/client"
+
+import { getPaginatedInvoices } from "@/actions";
 import { Card, CardContent } from "../ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
-interface Props {
-  invoices: Invoice[];
-}
+export default async function InvoicesPaginatedGrid() {
 
-export default function InvoicesPaginatedGrid({ invoices }: Props) {
+  const { invoices } = await getPaginatedInvoices({page: 1, take: 12});
+
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -28,7 +28,7 @@ export default function InvoicesPaginatedGrid({ invoices }: Props) {
                 <TableCell>{invoice.fechaDeFactura.toLocaleDateString('es')}</TableCell>
                 <TableCell>${invoice.monto.toFixed(2)}</TableCell>
                 <TableCell>{invoice.periodo}</TableCell>
-                <TableCell>Doppler Kinesio</TableCell>
+                <TableCell>{invoice.company}</TableCell>
               </TableRow>
             )) : (
               <TableRow>

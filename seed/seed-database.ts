@@ -37,7 +37,7 @@ async function main () {
   await prisma.employee.createMany({
     data: usersData
   });
-  const employeesDB = await prisma.employee.findMany();
+  const employeesDB = await prisma.employee.findMany({include: {companies: true}});
 
   // 4. Crear employeeCompany
   const employeeCompanyData = companiesDB.map((company) => ({
@@ -54,6 +54,7 @@ async function main () {
       data: { 
         ...rest,
         employeeId: employeesDB[0].id,
+        companyId: companiesDB[0].id,
       },
     })
   });

@@ -26,6 +26,9 @@ model Invoice {
 
   Employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId String
+
+  Company  Company @relation(fields: [companyId], references: [id])
+  companyId String
 }
 
 enum Role {
@@ -46,6 +49,7 @@ model Company {
   nombre String // Nombre
   activo Boolean @default(true) // Estado de la compañía
 
+  invoices  Invoice[] // Relación 1:N con Invoice
   employees EmployeeCompany[] // Relación N:N con Employee a través del modelo intermedio
 }
 

@@ -30,6 +30,13 @@ export const getPaginatedInvoices = async ({
       skip: (page - 1) * take,
       where: {
         employeeId: session.user.id
+      },
+      include: {
+        Company: {
+          select: {
+            nombre: true
+          }
+        }
       }
     });
 
@@ -40,7 +47,10 @@ export const getPaginatedInvoices = async ({
     return {
       currentPage: 1,
       totalPages: totalPages,
-      invoices: invoices
+      invoices: invoices.map((invoice) => ({
+        ...invoice,
+        company: invoice.Company.nombre
+      }))
     }
   } catch (error) {
     throw new Error('No se pudo cargar las facturas');;

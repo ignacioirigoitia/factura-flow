@@ -46,7 +46,7 @@ export default function InvoiceHeader({ companies }: Props) {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newInvoice, setNewInvoice] = useState<CreateInvoice>(defaultValues);
-  const [company, setCompany] = useState<string | undefined>()
+  const [company, setCompany] = useState<string>(companies[0].id)
   const route = useRouter();
 
   const session = useSession();
@@ -69,7 +69,8 @@ export default function InvoiceHeader({ companies }: Props) {
         numeroDeFactura: newInvoice.numeroDeFactura!,
         periodo: newInvoice.periodo!,
         notas: newInvoice.notas ?? '',
-        estado: "PENDIENTE"
+        estado: "PENDIENTE",
+        companyId: company,
       });
       if (resp.ok) {
         closeDialog(false);
