@@ -24,8 +24,8 @@ model Invoice {
   estado          Estado   @default(PENDIENTE) // Estado de la factura
   notas           String? // Notas adicionales
 
-  Employee        Employee    @relation(fields: [employeeId], references: [id])
-  employeeId      String
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
 }
 
 enum Role {
@@ -46,7 +46,7 @@ model Company {
   nombre String // Nombre
   activo Boolean @default(true) // Estado de la compañía
 
-  Employee Employee[] // Relación 1:N con User
+  employees EmployeeCompany[] // Relación N:N con Employee a través del modelo intermedio
 }
 
 model Employee {
@@ -58,8 +58,15 @@ model Employee {
   rol            Role    @default(user) // Rol del usuario
   activo         Boolean @default(true) // Estado del usuario
 
-  Company        Company?  @relation(fields: [companyId], references: [id]) // Relación 1:1 con Company
-  companyId      String?
+  invoices  Invoice[] // Relación 1:N con Invoice
+  companies EmployeeCompany[] // Relación N:N con Company a través del modelo intermedio
+}
 
-  Invoice        Invoice[] // Relación 1:N con Invoice
+model EmployeeCompany {
+  id         String   @id @default(uuid()) // UUID como ID
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String
 }

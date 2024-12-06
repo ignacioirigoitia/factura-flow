@@ -7,6 +7,7 @@ async function main () {
   // 1. Borrar registros previos
   // await Promise.all([
     await prisma.invoice.deleteMany();
+    await prisma.employeeCompany.deleteMany();
     await prisma.company.deleteMany();
     await prisma.employee.deleteMany();
   // ]);
@@ -32,12 +33,20 @@ async function main () {
     password: user.password,
     rol: user.rol,
     activo: user.activo,
-    companyId: companiesDB[0].id
   }));
   await prisma.employee.createMany({
     data: usersData
   });
   const employeesDB = await prisma.employee.findMany();
+
+  // 4. Crear employeeCompany
+  const employeeCompanyData = companiesDB.map((company) => ({
+    companyId: company.id,
+    employeeId: employeesDB[0].id,
+  }));
+  await prisma.employeeCompany.createMany({
+    data: employeeCompanyData
+  });
 
   invoices.forEach( async (invoice) => {
     const { ...rest } = invoice;

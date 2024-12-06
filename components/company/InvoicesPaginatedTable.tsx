@@ -6,7 +6,7 @@ interface Props {
   invoices: Invoice[];
 }
 
-export default function InvoicesPaginatedGrid({invoices}: Props) {
+export default function InvoicesPaginatedGrid({ invoices }: Props) {
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -21,7 +21,8 @@ export default function InvoicesPaginatedGrid({invoices}: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {invoices.map((invoice) => (
+
+            {invoices.length > 0 ? invoices.map((invoice) => (
               <TableRow key={invoice.id}>
                 <TableCell>{invoice.numeroDeFactura}</TableCell>
                 <TableCell>{invoice.fechaDeFactura.toLocaleDateString('es')}</TableCell>
@@ -29,7 +30,13 @@ export default function InvoicesPaginatedGrid({invoices}: Props) {
                 <TableCell>{invoice.periodo}</TableCell>
                 <TableCell>Doppler Kinesio</TableCell>
               </TableRow>
-            ))}
+            )) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  No tenes facturas cargadas
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

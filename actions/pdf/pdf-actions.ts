@@ -2,10 +2,7 @@
 
 import { processPDF } from "./process-pdf";
 
-export const createPdf = async (file: File): Promise<any> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
+export const createPdf = async (formData: FormData): Promise<any> => {
   try {
     const response = await processPDF(formData);
     return response.message; 

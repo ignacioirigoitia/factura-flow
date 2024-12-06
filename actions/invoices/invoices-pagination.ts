@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 
 interface PaginationOptions {
@@ -17,10 +18,19 @@ export const getPaginatedInvoices = async ({
 
   try {
 
+
+    const session = await auth();
+    if (!session) {
+      throw new Error('No se pudo obtener la sesión');
+    }
+
     //1. Get invoices
     const invoices = await prisma.invoice.findMany({
       take: take,
       skip: (page - 1) * take,
+      where: {
+        employeeId: session.user.id
+      }
     });
 
     //2. get total pages

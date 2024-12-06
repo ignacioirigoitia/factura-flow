@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from '@/auth.config';
 import prisma from '@/lib/prisma';
 import { Estado, Prisma } from '@prisma/client';
 
@@ -31,6 +32,15 @@ interface CreateInvoiceBody {
 export async function createInvoice( invoice: CreateInvoiceBody ) {
 
   try {
+
+    // validar que el usuario este logueado y sea un usuario
+    const session = await auth();
+    const user = session?.user;
+
+    if (!user || user.rol !== 'user') {
+      return { message: 'No autorizado', code: '401', ok: false };
+    }
+
     // Validar el cuerpo de la solicitud según el esquema definido
     const data = await invoiceSchema.validate(invoice);
 
@@ -40,8 +50,7 @@ export async function createInvoice( invoice: CreateInvoiceBody ) {
         ...data,
         notas: data.notas || null,
         estado: data.estado as Estado || 'PENDIENTE',
-        // TODO: Reemplazar con el ID del usuario autenticado
-        employeeId: '123',
+        employeeId: user.id,
       },
     });
 
