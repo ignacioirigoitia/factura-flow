@@ -17,8 +17,8 @@ const menuUserItems = [
     {
         path: '/dashboard/supplie',
         icon: <IoPeopleOutline size={40} />,
-        title: 'Empleado',
-        subtitle: 'Facturas para el empleado'
+        title: 'Facturas',
+        subtitle: 'Carga tus facturas aqui'
     },
 ]
 const menuAdminItems = [
@@ -80,12 +80,12 @@ export const Sidebar = async () => {
                             className="rounded-full w-8 h-8"
                             width={50}
                             height={50}
-                            src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c"
+                            src="https://res.cloudinary.com/dcyx4jnch/image/upload/v1733463051/profile-default-icon-2048x2045-u3j7s5nj_ob96dp.png"
                             alt="User avatar"
                         />
                     </span>
                     <span className="text-sm md:text-base font-bold">
-                        Ignacio Irigoitia
+                        {session?.user.nombreCompleto}
                     </span>
                 </div>
             </div>
