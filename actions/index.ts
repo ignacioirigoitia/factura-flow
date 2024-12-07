@@ -2,6 +2,8 @@
 
 export * from './invoices/create-invoice';
 export * from './invoices/invoices-pagination';
+export * from './invoices/admin-invoices-pagination';
+export * from './invoices/update-invoice-status';
 
 export * from './pdf/pdf-actions';
 export * from './pdf/process-pdf';

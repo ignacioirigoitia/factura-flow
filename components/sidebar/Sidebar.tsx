@@ -26,7 +26,7 @@ const menuAdminItems = [
         path: '/admin/company',
         icon: <IoBusinessOutline size={40} />,
         title: 'Administrativo',
-        subtitle: 'Facturas para el administrativo'
+        subtitle: 'Mira tus facturas aqui'
     },
     {
         path: '/admin/users',
