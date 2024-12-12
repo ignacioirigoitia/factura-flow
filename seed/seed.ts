@@ -63,18 +63,6 @@ export const initialData: SeedData = {
         {
             nombre: 'Consultorio 1',
             activo: true
-        },
-        {
-            nombre: 'Consultorio 2',
-            activo: true
-        },
-        {
-            nombre: 'Consultorio 3',
-            activo: false
-        },
-        {
-            nombre: 'Consultorio 4',
-            activo: true
         }
     ],
     invoices: [
