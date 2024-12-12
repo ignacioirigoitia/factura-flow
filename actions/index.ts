@@ -1,4 +1,5 @@
 
+export * from './auth/send-email';
 
 export * from './invoices/create-invoice';
 export * from './invoices/invoices-pagination';

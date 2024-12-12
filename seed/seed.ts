@@ -48,7 +48,7 @@ export const initialData: SeedData = {
             telefono: '123456789',
             password: bcryptjs.hashSync('123456', 10),
             rol: 'user',
-            activo: false,
+            activo: true,
         },
         {
             nombreCompleto: 'User',
@@ -56,7 +56,7 @@ export const initialData: SeedData = {
             telefono: '123456789',
             password: bcryptjs.hashSync('123456', 10),
             rol: 'administrator',
-            activo: false,
+            activo: true,
         }
     ],
     companies: [

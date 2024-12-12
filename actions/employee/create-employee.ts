@@ -3,12 +3,14 @@
 import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 import bcryptjs from 'bcryptjs';
+import { sendEmailAction } from "../auth/send-email";
 
 interface ICreateEmployee {
   nombreCompleto: string;
   correo: string;
   telefono: string;
   companyId: string;
+  companyName: string;
 }
 
 export const createEmployee = async (employee: ICreateEmployee) => {
@@ -17,9 +19,9 @@ export const createEmployee = async (employee: ICreateEmployee) => {
     const session = await auth();
     if(!session) throw new Error('No hay una sesión activa');
 
-    const password = bcryptjs.hashSync(
-      employee.nombreCompleto.replace(/\s/g, '') + new Date().getFullYear(), 10
-    );
+    const realPassword = employee.nombreCompleto.replace(/\s/g, '') + new Date().getFullYear();
+
+    const password = bcryptjs.hashSync(realPassword, 10);
     const { nombreCompleto, correo, telefono, companyId } = employee;
     // Crear el employee en la base de datos usando Prisma
     // La password va a ser por defecto el nombre cortandole los espacios + el año actual
@@ -28,7 +30,7 @@ export const createEmployee = async (employee: ICreateEmployee) => {
         nombreCompleto: nombreCompleto,
         correo: correo,
         telefono: telefono,
-        password: password
+        password: password,
       },
     });
 
@@ -37,6 +39,13 @@ export const createEmployee = async (employee: ICreateEmployee) => {
         employeeId: employeeDb.id,
         companyId: companyId
       }
+    });
+
+    await sendEmailAction({
+      to: correo,
+      subject: 'Bienvenido a FacturaFlow',
+      text: `Hola ${nombreCompleto}, te has registrado correctamente en nuestra plataforma, para iniciar sesión ingresa a https://facturaflow.com. \nTu correo es: ${correo} \nTu contraseña es: ${realPassword}`,
+      companyName: employee.companyName
     });
 
     return {

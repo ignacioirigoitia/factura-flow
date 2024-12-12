@@ -25,7 +25,8 @@ export const UsersHeader = ({companies}:Props) => {
       nombreCompleto: user.name,
       correo: user.email,
       telefono: user.phone,
-      companyId: user.company
+      companyId: user.company,
+      companyName: companies.find(c => c.id === user.company)?.nombre || '',
     })
     if(resp.ok){
       toast.success(resp.message, {

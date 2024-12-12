@@ -9,7 +9,7 @@ import { User, UsersForm } from "./UsersForm";
 
 interface Props {
   companies: Company[];
-  onSubmit: (user: Omit<User, "id">) => void;
+  onSubmit: (user: Omit<User, "id">) => Promise<void>;
 }
 
 export const UsersDialog = ({companies, onSubmit}:Props) => {

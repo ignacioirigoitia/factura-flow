@@ -24,7 +24,7 @@ export interface User {
 }
 
 interface UserFormProps {
-  onSubmit: (user: Omit<User, "id">) => void;
+  onSubmit: (user: Omit<User, "id">) => Promise<void>;
   companies: Company[];
 }
 
@@ -34,6 +34,8 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
   const setSelectedEmployee = useAdminEmployeeStore(state => state.setSelectedEmployee);
 
   const setOpenDialog = useAdminEmployeeStore(state => state.setOpenDialog);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const route = useRouter();
 
@@ -50,6 +52,7 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     if(selectedEmployee){
       const resp = await updateEmployee({
         nombreCompleto: name,
@@ -72,17 +75,19 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
           autoClose: 5000,
         });
       }
+      setIsLoading(false);
       setOpenDialog(false)
       return;
     }
-    onSubmit({ name, email, role, phone, company, status })
+    await onSubmit({ name, email, role, phone, company, status })
+    setIsLoading(false);
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="name" className="text-sm font-medium">
-          Nombre
+          Nombre completo
         </label>
         <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
       </div>
@@ -152,8 +157,10 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
           Activo
         </label>
       </div>
-      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500">
-        {selectedEmployee ? "Actualizar" : "Crear"}
+      <Button disabled={isLoading} type="submit" className="w-full bg-blue-600 hover:bg-blue-500">
+        {
+          isLoading ? 'Cargando...' : selectedEmployee ? 'Actualizar' : 'Agregar'
+        }
       </Button>
     </form>
   )
