@@ -1,5 +1,6 @@
 'use server'
 
+import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 
 interface ICreateCompany {
@@ -10,6 +11,17 @@ interface ICreateCompany {
 export const createCompany = async (company: ICreateCompany) => {
 
   try {
+
+    const session = await auth();
+    if(!session) throw new Error('No hay una sesión activa');
+
+    if(session.user.rol !== 'administrator') {
+      return {
+        message: 'No tienes permisos para crear una compañia',
+        code: '401',
+        ok: false
+      }
+    }
 
     // Crear la compañia en la base de datos usando Prisma
     const companyDb = await prisma.company.create({

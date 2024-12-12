@@ -57,7 +57,7 @@ export const authConfig : NextAuthConfig = {
           where: { correo: email.toLowerCase()}
         });
 
-        if(!user) return null;
+        if(!user || !user.activo) return null;
 
         // comparacion de las contraseñas
         if(!bcryptjs.compareSync(password, user.password)) return null;

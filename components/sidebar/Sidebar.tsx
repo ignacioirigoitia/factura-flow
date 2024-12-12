@@ -49,6 +49,12 @@ const menuSuperAdmin = [
         title: 'Usuarios',
         subtitle: 'Gestion de usuarios'
     },
+    {
+        path: '/administrator/invoices',
+        icon: <IoBusinessOutline size={40} />,
+        title: 'Facturas',
+        subtitle: 'Mira todas las facturas aqui'
+    },
 ]
 
 export const Sidebar = async () => {

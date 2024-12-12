@@ -1,5 +1,6 @@
 'use server'
 
+import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 import bcryptjs from 'bcryptjs';
 
@@ -12,6 +13,10 @@ interface ICreateEmployee {
 
 export const createEmployee = async (employee: ICreateEmployee) => {
   try {
+
+    const session = await auth();
+    if(!session) throw new Error('No hay una sesión activa');
+
     const password = bcryptjs.hashSync(
       employee.nombreCompleto.replace(/\s/g, '') + new Date().getFullYear(), 10
     );
@@ -23,12 +28,19 @@ export const createEmployee = async (employee: ICreateEmployee) => {
         nombreCompleto: nombreCompleto,
         correo: correo,
         telefono: telefono,
-        companyId: companyId,
         password: password
       },
     });
+
+    await prisma.employeeCompany.createMany({
+      data: {
+        employeeId: employeeDb.id,
+        companyId: companyId
+      }
+    });
+
     return {
-      message: 'Employee creada con exito',
+      message: 'Empleado creado con exito',
       code: '200',
       ok: true,
       employee: employeeDb

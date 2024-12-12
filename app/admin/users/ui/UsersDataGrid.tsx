@@ -1,9 +1,26 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Company, Employee } from '@/interfaces'
+import { Company } from '@/interfaces'
 import { UsersFilters } from './UsersFilters'
 import { UsersItem } from './UsersItem'
+import { Role } from '@prisma/client'
+
+
+export type Employee = {
+  companies: {
+    id: string;
+    nombre: string;
+    activo: boolean;
+  }[];
+  id: string;
+  activo: boolean;
+  nombreCompleto: string;
+  correo: string;
+  telefono: string;
+  password: string;
+  rol: Role;
+}
 
 interface Props {
   employees: Employee[];
@@ -33,14 +50,14 @@ export const UsersDataGrid = ({ employees, companies }: Props) => {
                     <TableHead>Correo</TableHead>
                     <TableHead>Rol</TableHead>
                     <TableHead>Telefóno</TableHead>
-                    <TableHead>Consultorio</TableHead>
+                    <TableHead>Consultorios</TableHead>
                     <TableHead>Estado</TableHead>
                     <TableHead className="text-right"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {employees.map((employee) => (
-                    <UsersItem key={employee.id} employee={employee} />
+                    <UsersItem key={employee.id} employee={employee} companies={companies} />
                   ))}
                 </TableBody>
               </Table>

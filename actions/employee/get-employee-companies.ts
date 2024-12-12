@@ -25,7 +25,9 @@ export const getEmployeeCompanies = async () => {
 
 
     // Retornar las compañías
-    return employeeCompanies.map((relation) => relation.company);
+    return {
+      companies: employeeCompanies.map((relation) => relation.company)
+    }
 
   } catch (error) {
     console.log({error})

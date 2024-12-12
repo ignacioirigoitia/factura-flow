@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 
 
@@ -21,6 +22,18 @@ export const getPaginatedCompany = async ({
   if( page < 1 ) page = 1;
 
   try {
+
+    const session = await auth();
+    if(!session) throw new Error('No hay una sesión activa');
+
+    if(session.user.rol !== 'administrator') {
+      return {
+        message: 'No tienes permisos para ver las compañias',
+        code: '401',
+        ok: false
+      }
+    }
+
     //1. Get companies
     const companies = await prisma.company.findMany({
       take: take,

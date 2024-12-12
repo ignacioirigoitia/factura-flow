@@ -1,12 +1,19 @@
 'use client'
 
+import { updateEmployee } from "@/actions/employee/update-employee"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { Company } from "@/interfaces"
+import { useAdminEmployeeStore } from "@/store/admin/employee-store"
+import { Role } from "@prisma/client"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { toast } from "react-toastify"
 
-interface User {
+export interface User {
   id: number
   name: string
   email: string
@@ -17,24 +24,57 @@ interface User {
 }
 
 interface UserFormProps {
-  user?: User | null
-  onSubmit: (user: Omit<User, "id">) => void
+  onSubmit: (user: Omit<User, "id">) => void;
+  companies: Company[];
 }
 
-const roles = ["Admin", "Manager", "Employee", "Guest"];
-const companies = ["Acme Inc", "Globex Corp", "Initech", "Umbrella Corp"]
+export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
 
+  const selectedEmployee = useAdminEmployeeStore(state => state.selectedEmployee);
+  const setSelectedEmployee = useAdminEmployeeStore(state => state.setSelectedEmployee);
 
-export const UsersForm = ({ user, onSubmit }: UserFormProps) => {
-  const [name, setName] = useState(user?.name || "")
-  const [email, setEmail] = useState(user?.email || "")
-  const [role, setRole] = useState(user?.role || "")
-  const [phone, setPhone] = useState(user?.phone || "")
-  const [company, setCompany] = useState(user?.company || "")
-  const [status, setStatus] = useState<"activo" | "inactivo">(user?.status || "activo")
+  const setOpenDialog = useAdminEmployeeStore(state => state.setOpenDialog);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const route = useRouter();
+
+  const [name, setName] = useState(selectedEmployee?.nombreCompleto || "")
+  const [email, setEmail] = useState(selectedEmployee?.correo || "")
+  const [role, setRole] = useState(selectedEmployee?.rol || "")
+  const [phone, setPhone] = useState(selectedEmployee?.telefono || "")
+  const [company, setCompany] = useState(selectedEmployee?.companyId || "")
+  const [status, setStatus] = useState<"activo" | "inactivo">(
+    selectedEmployee?.activo ? 'activo' : 'inactivo'
+  )
+
+  const session = useSession();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if(selectedEmployee){
+      const resp = await updateEmployee({
+        nombreCompleto: name,
+        correo: email,
+        telefono: phone,
+        companyId: company,
+        activo: status === "activo",
+        id: selectedEmployee.id
+      })
+      setSelectedEmployee(null);
+      if(resp.ok){
+        toast.success(resp.message, {
+          position: 'bottom-left',
+          autoClose: 5000,
+        });
+        route.refresh()
+      } else {
+        toast.error(resp.message, {
+          position: 'bottom-left',
+          autoClose: 5000,
+        });
+      }
+      setOpenDialog(false)
+      return;
+    }
     onSubmit({ name, email, role, phone, company, status })
   }
 
@@ -58,23 +98,37 @@ export const UsersForm = ({ user, onSubmit }: UserFormProps) => {
         </label>
         <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
       </div>
-      <div className="space-y-2">
-        <label htmlFor="role" className="text-sm font-medium">
-          Rol
-        </label>
-        <Select value={role} onValueChange={setRole}>
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona un rol" />
-          </SelectTrigger>
-          <SelectContent>
-            {roles.map((r) => (
-              <SelectItem key={r} value={r}>
-                {r}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {
+        session.data?.user.rol === 'administrator' && (
+          <div className="space-y-2">
+            <label htmlFor="role" className="text-sm font-medium">
+              Rol
+            </label>
+            <Select value={role} onValueChange={setRole}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona un rol" />
+              </SelectTrigger>
+              <SelectContent>
+                {
+                  session.data?.user.rol === 'administrator' ? (
+                    Object.values(Role).map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r}
+                      </SelectItem>
+                    ))
+                  ) : ( 
+                    Object.values(Role).filter(x => x !== 'administrator').map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {r}
+                      </SelectItem>
+                    ))
+                  )
+                }
+              </SelectContent>
+            </Select>
+          </div>
+        )
+      }
       <div className="space-y-2">
         <label htmlFor="company" className="text-sm font-medium">
           Consultorio
@@ -85,8 +139,8 @@ export const UsersForm = ({ user, onSubmit }: UserFormProps) => {
           </SelectTrigger>
           <SelectContent>
             {companies.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
+              <SelectItem key={c.id} value={c.id}>
+                {c.nombre}
               </SelectItem>
             ))}
           </SelectContent>
@@ -99,7 +153,7 @@ export const UsersForm = ({ user, onSubmit }: UserFormProps) => {
         </label>
       </div>
       <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500">
-        {user ? "Actualizar" : "Crear"}
+        {selectedEmployee ? "Actualizar" : "Crear"}
       </Button>
     </form>
   )

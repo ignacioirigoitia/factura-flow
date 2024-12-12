@@ -73,4 +73,6 @@ model EmployeeCompany {
 
   company   Company @relation(fields: [companyId], references: [id])
   companyId String
+
+  @@unique([employeeId, companyId])
 }

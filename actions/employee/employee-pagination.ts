@@ -1,5 +1,6 @@
 'use server';
 
+import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 
 interface PaginationOptions {
@@ -23,6 +24,10 @@ export const getPaginatedEmployee = async ({
   if (isNaN(Number(page))) page = 1;
   if (page < 1) page = 1;
 
+  const session = await auth();
+  if(!session) throw new Error('No hay una sesión activa');
+  if(session.user.rol === 'user') throw new Error('No tienes permisos para realizar esta acción');
+
   try {
     // 1. Obtener empleados con sus compañías y aplicar el filtro companyId
     const employees = await prisma.employee.findMany({
@@ -44,6 +49,13 @@ export const getPaginatedEmployee = async ({
         correo: {
           contains: email,
           mode: 'insensitive',
+        },
+        rol: {
+          not: session.user.rol === 'administrator' ? undefined : 'administrator',
+        },
+        // no quiero que me devuelva el usuario logueado
+        id: {
+          not: session.user.id,
         },
         // Si se pasa un companyId, filtrar por esa compañía
         ...(companyId && {
