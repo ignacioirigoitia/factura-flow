@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link"
@@ -9,7 +9,7 @@ import { authenticate } from "@/actions/auth/login";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { IoInformation, IoInformationOutline } from "react-icons/io5";
+import { IoEye, IoEyeOff, IoInformation } from "react-icons/io5";
 
 export const LoginForm = () => {
   const [state, dispatch] = useFormState(authenticate, undefined);
@@ -37,20 +37,7 @@ export const LoginForm = () => {
             placeholder="Email address"
           />
         </div>
-        <div>
-          <Label htmlFor="password" className="sr-only">
-            Password
-          </Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Password"
-          />
-        </div>
+        <PasswordInput />
       </div>
 
       <div className="flex items-center justify-end">
@@ -61,7 +48,6 @@ export const LoginForm = () => {
         </div>
       </div>
 
-
       {state === 'Invalid credentials.' && (
         <div className="flex flex-row mb-2">
           <IoInformation className="h-5 w-5 text-red-500" />
@@ -69,12 +55,46 @@ export const LoginForm = () => {
         </div>
       )}
 
-
       <LoginButton />
     </form>
   )
 }
 
+function PasswordInput() {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  return (
+    <div className="relative">
+      <Label htmlFor="password" className="sr-only">
+        Password
+      </Label>
+      <Input
+        id="password"
+        name="password"
+        type={showPassword ? "text" : "password"}
+        autoComplete="current-password"
+        required
+        className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+        placeholder="Password"
+      />
+      <button
+        type="button"
+        onClick={togglePasswordVisibility}
+        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+      >
+        {showPassword ? (
+          <IoEyeOff className="h-5 w-5" aria-hidden="true" />
+        ) : (
+          <IoEye className="h-5 w-5" aria-hidden="true" />
+        )}
+      </button>
+    </div>
+  );
+}
 
 function LoginButton() {
   const { pending } = useFormStatus();
