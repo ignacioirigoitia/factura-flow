@@ -26,6 +26,7 @@ export interface CreateInvoice {
   fechaDeFactura: null | Date;
   numeroDeFactura: null | string;
   periodo: null | string;
+  nombreArchivo?: string;
 }
 
 const defaultValues: CreateInvoice = {
@@ -70,6 +71,7 @@ export default function InvoiceHeader({ companies }: Props) {
         notas: newInvoice.notas ?? '',
         estado: "PENDIENTE",
         companyId: company,
+        nombreArchivo: newInvoice.nombreArchivo ?? '',
       });
       if (resp.ok) {
         closeDialog(false);
@@ -90,9 +92,7 @@ export default function InvoiceHeader({ companies }: Props) {
   const onFileChange = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    // const result = await uploadFile(formData);
-    // console.log(result)
-    // console.log(pdf)
+    await uploadFile(formData);
     const resp = await createPdf(formData);
     if (resp) {
       const monto = obtenerMonto(resp);
@@ -100,13 +100,15 @@ export default function InvoiceHeader({ companies }: Props) {
       const fechaDeFactura = obtenerFechaEmision(resp);
       const numeroDeFactura = obtenerPuntoDeVentaYCompNro(resp);
       const periodo = obtenerPeriodoFacturado(resp);
+      const nombreArchivo = file.name;
       setNewInvoice({
         notas: newInvoice.notas,
         monto,
         CAE,
         fechaDeFactura,
         numeroDeFactura,
-        periodo
+        periodo,
+        nombreArchivo,
       });
     }
   }

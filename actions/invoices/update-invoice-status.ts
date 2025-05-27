@@ -37,6 +37,7 @@ export const updateInvoiceStatus = async (invoiceId: string, newStatus: Estado) 
       ok: true
     };
   } catch (error) {
+    console.error('Error al actualizar la factura:', error);
     throw new Error('No se pudo actualizar la factura');
   }
 }

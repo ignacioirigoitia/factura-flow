@@ -23,6 +23,7 @@ model Invoice {
   periodo         String // Periodo de facturación
   estado          Estado   @default(PENDIENTE) // Estado de la factura
   notas           String? // Notas adicionales
+  nombreArchivo   String
 
   Employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId String

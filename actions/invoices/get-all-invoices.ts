@@ -52,6 +52,7 @@ export const getAllInvoicesPaginated = async ({
       })),
     }
   } catch (error) {
+    console.log('Error al obtener las facturas:', error);
     throw new Error('No se pudo cargar las facturas');;
   }
 }

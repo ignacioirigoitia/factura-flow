@@ -1,9 +1,9 @@
 
-import { getPaginatedEmployee } from "@/actions"
 import { UsersDataGrid } from "./ui/UsersDataGrid"
 import { UsersHeader } from "./ui/UsersHeader"
 import { Pagination } from "@/components/pagination/Pagination";
 import { getEmployeeCompanies } from "@/actions/employee/get-employee-companies";
+import { getAdminEmployees } from "@/actions/employee/admin-employees";
 
 interface CompanyManagementProps {
   searchParams: {
@@ -28,7 +28,7 @@ export default async function UserManagement({ searchParams }: CompanyManagement
       : undefined;
 
   const { companies } = await getEmployeeCompanies();
-  const { employees, totalPages } = await getPaginatedEmployee({
+  const { employees, totalPages } = await getAdminEmployees({
     page: page,
     take: 12,
     companyId: company,

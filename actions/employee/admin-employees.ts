@@ -1,5 +1,3 @@
-'use server';
-
 import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 
@@ -12,7 +10,7 @@ interface PaginationOptions {
   email?: string;
 }
 
-export const getPaginatedEmployee = async ({ 
+export const getAdminEmployees = async ({ 
   page = 1, 
   take = 12, 
   activo, 
@@ -20,16 +18,29 @@ export const getPaginatedEmployee = async ({
   nombreCompleto, 
   email 
 }: PaginationOptions) => {
-
   if (isNaN(Number(page))) page = 1;
   if (page < 1) page = 1;
 
   const session = await auth();
-  if(!session) throw new Error('No hay una sesión activa');
-  if(session.user.rol === 'user') throw new Error('No tienes permisos para realizar esta acción');
+  if (!session || session.user.rol !== 'admin') {
+    throw new Error('No se pudo obtener la sesión o no tienes permisos');
+  }
 
   try {
-    // 1. Obtener empleados con sus compañías y aplicar el filtro companyId
+
+    // 1. Obtener los companyId asociados al usuario
+    const employeeCompanies = await prisma.employeeCompany.findMany({
+      where: {
+        employeeId: session.user.id,
+      },
+      select: {
+        companyId: true,
+      },
+    });
+
+    const companyIds = employeeCompanies.map((ec) => ec.companyId);
+
+    // 2. Obtener empleados con sus compañías y aplicar los filtros
     const employees = await prisma.employee.findMany({
       take,
       skip: (page - 1) * take,
@@ -46,12 +57,19 @@ export const getPaginatedEmployee = async ({
           contains: nombreCompleto,
           mode: 'insensitive',
         },
+        companies: {
+          some: {
+            companyId: {
+              in: companyIds,
+            }
+          }
+        },
         correo: {
           contains: email,
           mode: 'insensitive',
         },
         rol: {
-          not: session.user.rol === 'administrator' ? undefined : 'administrator',
+          not: 'administrator',
         },
         // no quiero que me devuelva el usuario logueado
         id: {
@@ -71,23 +89,26 @@ export const getPaginatedEmployee = async ({
       },
     });
 
-    // 2. Calcular total de páginas
-    const totalCount = await prisma.employee.count({
-      where: { activo },
+    // 3. Calcular el total de páginas
+    const totalCount = await prisma.invoice.count({
+      where: {
+        companyId: {
+          in: companyIds,
+        },
+      },
     });
     const totalPages = Math.ceil(totalCount / take);
 
-    // 3. Formatear respuesta
     return {
       currentPage: page,
-      totalPages,
+      totalPages: totalPages,
       employees: employees.map((employee) => ({
         ...employee,
         companies: employee.companies.map((relation) => relation.company),
       })),
     };
   } catch (error) {
-    console.error('Error al obtener empleados paginados:', error);
-    throw new Error('No se pudo cargar los empleados');
+    console.error(error);
+    throw new Error('No se pudo cargar las facturas');
   }
-};
+}

@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
-import { IoDownload, IoEye } from 'react-icons/io5'
+import { IoEye } from 'react-icons/io5'
 import { getPdfAws, updateInvoiceStatus } from '@/actions'
 import { Estado } from '@prisma/client'
 import { formatDate } from '../../../../utils/format-date';
@@ -34,6 +34,7 @@ type Invoice = {
   notas: string | null;
   employeeId: string;
   companyId: string;
+  nombreArchivo: string;
 }
 
 interface Props {
@@ -176,7 +177,7 @@ export const AdminCompanyContent = ({ invoices }: Props) => {
                   </TableCell>
                   <TableCell>
                     <button onClick={async () => {
-                      const resp = await getPdfAws('AGOSTO.pdf')
+                      const resp = await getPdfAws(invoice.nombreArchivo)
                       if (resp.ok && resp.url) {
                         setCurrentPdf(resp.url)
                         setIsModalFileOpen(invoice)
@@ -226,12 +227,6 @@ export const AdminCompanyContent = ({ invoices }: Props) => {
               height="450"
             />
           </div>
-          <DialogFooter>
-            <button>
-              <IoDownload size={25} className='mr-4' />
-            </button>
-            <Button variant="outline" onClick={() => setIsModalFileOpen(null)}>Atras</Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
