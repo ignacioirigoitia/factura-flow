@@ -1,9 +1,7 @@
 'use client'
 
-
-import { createPdf } from '@/actions/pdf-actions';
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import {useState} from 'react';
+import {useDropzone} from 'react-dropzone';
 
 interface Props {
   onFileChange: (file: File) => Promise<void>

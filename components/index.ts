@@ -10,5 +10,3 @@ export * from './sidebar/SidebarMenuItem'
 
 
 export * from './ui/label'
-
-export * from './not-content/NotContent'

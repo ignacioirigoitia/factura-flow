@@ -13,7 +13,7 @@ interface Props {
   companies: Company[]
 }
 
-export const UsersItem = ({employee, companies}: Props) => {
+export const UsersItem = ({employee}: Props) => {
 
   const setOpenDialog = useAdminEmployeeStore(state => state.setOpenDialog);
   const setSelectedEmployee = useAdminEmployeeStore(state => state.setSelectedEmployee);

@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation"
 import { InvoiceInformation } from "./InvoiceInformation"
 import { createInvoice, createPdf } from "@/actions"
 import { useSession } from 'next-auth/react'
-import { uploadFile } from "@/actions/pdf/upload-pdf-aws"
 import { Label } from "../ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Company } from "@/interfaces"

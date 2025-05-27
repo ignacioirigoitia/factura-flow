@@ -1,10 +1,14 @@
 {
   "name": "factura-flow",
+  "engines": {
+    "node": "20.19.2"
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build": "npm install && npm run build:next",
+    "build:next": "next build",
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "ts-node seed/seed-database.ts"

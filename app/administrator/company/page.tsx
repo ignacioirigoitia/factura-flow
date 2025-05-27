@@ -32,10 +32,10 @@ export default async function CompanyManagement({ searchParams }: CompanyManagem
     <div className="container mx-auto p-6 space-y-4">
 
       <CompanyHeader />
-      <CompanyDataGrid companies={companies} />
+      <CompanyDataGrid companies={companies ?? []} />
 
       {
-        (totalPages > 1 && <Pagination totalPages={totalPages} />)
+        (totalPages && totalPages > 1 && <Pagination totalPages={totalPages} />)
       }
 
     </div>
