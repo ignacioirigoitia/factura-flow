@@ -8,6 +8,7 @@ interface SeedInvoices {
     numeroDeFactura: string;
     periodo: string;
     estado: Estado;
+    nombreArchivo: string;
 }
 
 interface SeedCompany {
@@ -73,7 +74,8 @@ export const initialData: SeedData = {
             fechaDeFactura: new Date(),
             numeroDeFactura: '0001-00000001',
             periodo: '01/2021',
-            estado: 'PENDIENTE'
+            estado: 'PENDIENTE',
+            nombreArchivo: 'factura_0001-00000001.pdf'
         },
         {
             fechaActual: new Date(),
@@ -82,7 +84,8 @@ export const initialData: SeedData = {
             fechaDeFactura: new Date(),
             numeroDeFactura: '0001-00000002',
             periodo: '01/2021',
-            estado: 'REGISTRADA'
+            estado: 'REGISTRADA',
+            nombreArchivo: 'factura_0001-00000002.pdf'
         },
         {
             fechaActual: new Date(),
@@ -91,7 +94,8 @@ export const initialData: SeedData = {
             fechaDeFactura: new Date(),
             numeroDeFactura: '0001-00000003',
             periodo: '03/2021',
-            estado: 'PAGADA'
+            estado: 'PAGADA',
+            nombreArchivo: 'factura_0001-00000003.pdf'
         },
         {
             fechaActual: new Date(),
@@ -100,7 +104,8 @@ export const initialData: SeedData = {
             fechaDeFactura: new Date(),
             numeroDeFactura: '0001-00000004',
             periodo: '02/2021',
-            estado: 'CANCELADA'
+            estado: 'CANCELADA',
+            nombreArchivo: 'factura_0001-00000004.pdf'
         }
     ]
 }
