@@ -6,11 +6,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "npm install && npm run build:next",
+    "build": "npm run prisma:deploy && && npm run seed && next build",
     "build:next": "next build",
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",
+    "prisma:deploy": "npx prisma migrate deploy && prisma generate",
     "seed": "ts-node seed/seed-database.ts"
   },
   "dependencies": {
