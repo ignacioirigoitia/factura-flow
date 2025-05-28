@@ -6,7 +6,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "npm run prisma:deploy && && npm run seed && next build",
+    "build": "npm run prisma:deploy && npm run seed && next build",
     "build:next": "next build",
     "dev": "next dev",
     "start": "next start",
