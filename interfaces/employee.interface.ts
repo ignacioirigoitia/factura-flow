@@ -11,5 +11,6 @@ export interface Employee {
   rol: 'admin'|'administrator'|'user';
   companyId: string | null;
   company?: Company;
-  activo: boolean
+  activo: boolean;
+  companies: Company[];
 }

@@ -7,7 +7,7 @@ interface IUpdateEmployee {
   nombreCompleto: string;
   correo: string;
   telefono: string;
-  companyId: string;
+  companiesId: string[];
   activo: boolean;
   id: string;
 }
@@ -18,7 +18,7 @@ export const updateEmployee = async (employee: IUpdateEmployee) => {
     const session = await auth();
     if(!session) throw new Error('No hay una sesión activa');
 
-    const { nombreCompleto, correo, telefono, companyId, activo, id } = employee;
+    const { nombreCompleto, correo, telefono, companiesId, activo, id } = employee;
 
     const employeeDb = await prisma.employee.update({
       where: {
@@ -38,11 +38,11 @@ export const updateEmployee = async (employee: IUpdateEmployee) => {
       },
     });
     
-    await prisma.employeeCompany.create({
-      data: {
+    await prisma.employeeCompany.createMany({
+      data: companiesId.map((companyId) => ({
         employeeId: employeeDb.id,
-        companyId: companyId,
-      },
+        companyId,
+      })),
     });
 
     return {

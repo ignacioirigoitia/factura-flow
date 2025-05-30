@@ -1,5 +1,6 @@
 'use client'
 
+import SelectR from 'react-select';
 import { updateEmployee } from "@/actions/employee/update-employee"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,7 +20,7 @@ export interface User {
   email: string
   role: string
   phone: string
-  company: string
+  company: string[]
   status: "activo" | "inactivo"
 }
 
@@ -43,7 +44,7 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
   const [email, setEmail] = useState(selectedEmployee?.correo || "")
   const [role, setRole] = useState(selectedEmployee?.rol || "")
   const [phone, setPhone] = useState(selectedEmployee?.telefono || "")
-  const [company, setCompany] = useState(selectedEmployee?.companyId || "")
+  const [company, setCompany] = useState<string[]>(selectedEmployee?.companies.map(x => x.id) || [])
   const [status, setStatus] = useState<"activo" | "inactivo">(
     selectedEmployee?.activo ? 'activo' : 'inactivo'
   )
@@ -58,7 +59,7 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
         nombreCompleto: name,
         correo: email,
         telefono: phone,
-        companyId: company,
+        companiesId: company,
         activo: status === "activo",
         id: selectedEmployee.id
       })
@@ -118,7 +119,7 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
                   session.data?.user.rol === 'administrator' ? (
                     Object.values(Role).map((r) => (
                       <SelectItem key={r} value={r}>
-                        {r}
+                        {r === 'administrator' ? 'super user' : r}
                       </SelectItem>
                     ))
                   ) : ( 
@@ -138,18 +139,20 @@ export const UsersForm = ({ onSubmit, companies }: UserFormProps) => {
         <label htmlFor="company" className="text-sm font-medium">
           Consultorio
         </label>
-        <Select value={company} onValueChange={setCompany}>
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona un consultorio" />
-          </SelectTrigger>
-          <SelectContent>
-            {companies.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.nombre}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectR
+          closeMenuOnSelect={false}
+          isMulti
+          options={companies.map((x) => {
+            return { value: x.id, label: x.nombre }
+          })}
+          defaultValue={companies.filter(c => company.includes(c.id)).map(c => ({ value: c.id, label: c.nombre }))}
+          onChange={(selectedOptions) => {
+            const selectedValues = selectedOptions.map(option => option.value);
+            setCompany(selectedValues);
+          }}
+          placeholder="Selecciona uno o más consultorios"
+          noOptionsMessage={() => "No hay consultorios disponibles"}
+        />
       </div>
       <div className="flex items-center space-x-2">
         <Switch id="status" checked={status === "activo"} onCheckedChange={(checked) => setStatus(checked ? "activo" : "inactivo")} />

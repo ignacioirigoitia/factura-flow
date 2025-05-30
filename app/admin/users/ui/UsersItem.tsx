@@ -22,7 +22,7 @@ export const UsersItem = ({employee}: Props) => {
     <TableRow>
       <TableCell>{employee.nombreCompleto}</TableCell>
       <TableCell>{employee.correo}</TableCell>
-      <TableCell>{employee.rol}</TableCell>
+      <TableCell>{employee.rol === 'administrator' ? 'super user' : employee.rol}</TableCell>
       <TableCell>{employee.telefono}</TableCell>
       <TableCell>{employee.companies.map((x) => x.nombre).join(' - ')}</TableCell>
       <TableCell>
