@@ -6,7 +6,21 @@ export function obtenerFechaEmision(texto: string): Date | null {
   // Buscamos el índice de "Domicilio:"
   const indiceDomicilio = textoNormalizado.indexOf('Domicilio:');
   if (indiceDomicilio === -1) {
-    return null; // Si no se encuentra "Domicilio:", retornamos null
+    const indiceDomicilioComercial = textoNormalizado.indexOf('Domicilio Comercial:');
+    
+    // Extraemos el fragmento que sigue a "Domicilio:"
+    const fragmento = textoNormalizado.slice(indiceDomicilioComercial + 10);
+
+    // Buscamos el primer patrón de fecha en el formato DD/MM/YYYY
+    const match = fragmento.match(/\b(\d{2})\/(\d{2})\/(\d{4})\b/);
+    
+    if (!match) return null; // Si no encontramos la fecha, retornamos null
+
+    // Extraemos día, mes y año del match
+    const [, dia, mes, anio] = match;
+
+    // Creamos un objeto Date (mes se pasa como índice: enero = 0)
+    return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));
   }
 
   // Extraemos el fragmento que sigue a "Domicilio:"
@@ -18,7 +32,7 @@ export function obtenerFechaEmision(texto: string): Date | null {
   if (!match) return null; // Si no encontramos la fecha, retornamos null
 
   // Extraemos día, mes y año del match
-  const [_, dia, mes, anio] = match;
+  const [, dia, mes, anio] = match;
 
   // Creamos un objeto Date (mes se pasa como índice: enero = 0)
   return new Date(parseInt(anio), parseInt(mes) - 1, parseInt(dia));

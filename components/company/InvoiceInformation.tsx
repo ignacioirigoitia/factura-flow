@@ -30,6 +30,10 @@ export const InvoiceInformation = ({newInvoice}: Props) => {
           <div className="text-sm">Periodo</div>
           <div className="text-lg font-semibold">{newInvoice.periodo}</div>
         </div>
+        <div>
+          <div className="text-sm">Nombre</div>
+          <div className="text-lg font-semibold">{newInvoice.nombreArchivo}</div>
+        </div>
       </div>
     </div>
   )
