@@ -54,7 +54,10 @@ export const authConfig : NextAuthConfig = {
 
         // buscar el correo
         const user = await prisma.employee.findUnique({ 
-          where: { correo: email.toLowerCase()}
+          where: { correo: email.toLowerCase()},
+          include: {
+            companies: true
+          }
         });
 
         if(!user || !user.activo) return null;

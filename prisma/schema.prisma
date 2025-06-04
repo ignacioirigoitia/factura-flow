@@ -52,6 +52,8 @@ model Company {
 
   invoices  Invoice[] // Relación 1:N con Invoice
   employees EmployeeCompany[] // Relación N:N con Employee a través del modelo intermedio
+
+  AdminInvoice AdminInvoice[]
 }
 
 model Employee {
@@ -65,6 +67,8 @@ model Employee {
 
   invoices  Invoice[] // Relación 1:N con Invoice
   companies EmployeeCompany[] // Relación N:N con Company a través del modelo intermedio
+
+  AdminInvoice AdminInvoice[]
 }
 
 model EmployeeCompany {
@@ -76,4 +80,19 @@ model EmployeeCompany {
   companyId String
 
   @@unique([employeeId, companyId])
+}
+
+
+model AdminInvoice {
+  id              String   @id @default(uuid()) // UUID como ID
+  fecha           DateTime @default(now()) // Fecha de creación
+  concepto        String // Concepto de la factura
+  notas           String? // Notas adicionales
+  nombreArchivo   String
+
+  createdById String
+  createdBy Employee @relation(fields: [createdById], references: [id])
+
+  Company  Company @relation(fields: [companyId], references: [id])
+  companyId String
 }

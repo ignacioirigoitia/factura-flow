@@ -51,7 +51,7 @@ export const LoginForm = () => {
       {state === 'Invalid credentials.' && (
         <div className="flex flex-row mb-2">
           <IoInformation className="h-5 w-5 text-red-500" />
-          <p className="text-sm text-red-500">Invalid credentials</p>
+          <p className="text-sm text-red-500">Credenciales invalidas</p>
         </div>
       )}
 

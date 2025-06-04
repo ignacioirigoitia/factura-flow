@@ -152,28 +152,40 @@ export const AdminCompanyContent = ({ invoices }: Props) => {
                   <TableCell>{invoice.numeroDeFactura}</TableCell>
                   <TableCell>{invoice.notas === null ? '-' : invoice.notas}</TableCell>
                   <TableCell>
-                    <Select
-                      value={invoice.estado}
-                      onValueChange={(value) => handleStatusChange(invoice.id, value as Invoice['estado'])}
-                    >
-                      <SelectTrigger className="w-[140px]">
-                        <SelectValue>
-                          <span className={`px-2 py-1 rounded text-xs font-semibold
-                        ${invoice.estado === Estado.PENDIENTE ? 'bg-yellow-200 text-yellow-800' :
-                              invoice.estado === Estado.PAGADA ? 'bg-green-200 text-green-800' :
-                                'bg-red-200 text-red-800'}`}>
-                            {invoice.estado}
-                          </span>
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.values(Estado).map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {
+                      invoice.estado === Estado.PAGADA ? (
+                        <span className="ml-2 px-2 py-1 rounded text-xs font-semibold bg-green-200 text-green-800">
+                          {invoice.estado}
+                        </span>
+                      ) : invoice.estado === Estado.CANCELADA ? (
+                        <span className="ml-2 px-2 py-1 rounded text-xs font-semibold bg-red-200 text-red-800">
+                          {invoice.estado}
+                        </span>
+                      ) : (
+                        <Select
+                          value={invoice.estado}
+                          onValueChange={(value) => handleStatusChange(invoice.id, value as Invoice['estado'])}
+                        >
+                          <SelectTrigger className="w-[140px] p-2">
+                            <SelectValue>
+                              <span className={`px-2 py-1 rounded text-xs font-semibold
+                        ${invoice.estado === Estado.PENDIENTE ? 'bg-yellow-200 text-yellow-800'  :
+                                    'bg-red-200 text-red-800'}`}>
+                                {invoice.estado}
+                              </span>
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(Estado).map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )
+                    }
+
                   </TableCell>
                   <TableCell>
                     <button onClick={async () => {
@@ -217,7 +229,7 @@ export const AdminCompanyContent = ({ invoices }: Props) => {
       <Dialog open={isModalFileOpen !== null} onOpenChange={() => setIsModalFileOpen(null)} >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Numbero de factura: {isModalFileOpen?.numeroDeFactura}</DialogTitle>
+            <DialogTitle>Numero de factura: {isModalFileOpen?.numeroDeFactura}</DialogTitle>
           </DialogHeader>
           <div className="flex justify-center">
             <embed

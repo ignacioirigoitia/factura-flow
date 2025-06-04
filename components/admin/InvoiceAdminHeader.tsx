@@ -8,68 +8,44 @@ import { Upload } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import PdfUploader from "../pdf-uploader/PdfUploader"
 
-import { obtenerCae, obtenerFechaEmision, obtenerMonto, obtenerPeriodoFacturado, obtenerPuntoDeVentaYCompNro } from "@/utils"
-
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
-import { InvoiceInformation } from "./InvoiceInformation"
-import { createInvoice, createPdf, uploadFile } from "@/actions"
+import { uploadFile } from "@/actions"
 import { Label } from "../ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Company } from "@/interfaces"
+import { createAdminInvoice } from "@/actions/admin-invoices/create-admin-invoice"
 
-export interface CreateInvoice {
+export interface CreateAdminInvoice {
   notas: null | string;
-  monto: null | number;
-  CAE: null | string;
-  fechaDeFactura: null | Date;
-  numeroDeFactura: null | string;
-  periodo: null | string;
-  nombreArchivo?: string;
+  fecha: Date;
+  nombreArchivo: string;
+  concepto: string;
 }
 
-const defaultValues: CreateInvoice = {
-  notas: null,
-  monto: null,
-  CAE: null,
-  fechaDeFactura: null,
-  numeroDeFactura: null,
-  periodo: null
+const defaultValues: CreateAdminInvoice = {
+  notas: "",
+  fecha: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000),
+  nombreArchivo: '',
+  concepto: '',
 }
 
 interface Props {
   companies: Company[];
 }
 
-export default function InvoiceHeader({ companies }: Props) {
+export default function InvoiceAdminHeader({ companies }: Props) {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [newInvoice, setNewInvoice] = useState<CreateInvoice>(defaultValues);
+  const [newInvoice, setNewInvoice] = useState<CreateAdminInvoice>(defaultValues);
   const [company, setCompany] = useState<string>(companies[0].id)
   const route = useRouter();
-
-  const haveInvoice = newInvoice.monto !== null ||
-    newInvoice.CAE !== null ||
-    newInvoice.fechaDeFactura !== null ||
-    newInvoice.numeroDeFactura !== null ||
-    newInvoice.periodo !== null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (haveInvoice) {
-      const resp = await createInvoice({
-        ...newInvoice,
-        monto: newInvoice.monto!,
-        CAE: newInvoice.CAE!,
-        fechaDeFactura: newInvoice.fechaDeFactura!,
-        numeroDeFactura: newInvoice.numeroDeFactura!,
-        periodo: newInvoice.periodo!,
-        notas: newInvoice.notas ?? '',
-        estado: "PENDIENTE",
-        companyId: company,
-        nombreArchivo: newInvoice.nombreArchivo ?? '',
-      });
+    if (newInvoice.nombreArchivo) {
+      const resp = await createAdminInvoice({...newInvoice, companyId: company});
       if (resp.ok) {
         closeDialog(false);
         toast.success(resp.message, {
@@ -83,6 +59,11 @@ export default function InvoiceHeader({ companies }: Props) {
           autoClose: 5000,
         });
       }
+    } else {
+      toast.error('Por favor, carga un archivo de factura.', {
+        position: 'bottom-left',
+        autoClose: 5000,
+      });
     }
   }
 
@@ -90,24 +71,10 @@ export default function InvoiceHeader({ companies }: Props) {
     const formData = new FormData();
     formData.append('file', file);
     await uploadFile(formData);
-    const resp = await createPdf(formData);
-    if (resp) {
-      const monto = obtenerMonto(resp);
-      const CAE = obtenerCae(resp);
-      const fechaDeFactura = obtenerFechaEmision(resp);
-      const numeroDeFactura = obtenerPuntoDeVentaYCompNro(resp);
-      const periodo = obtenerPeriodoFacturado(resp);
-      const nombreArchivo = file.name;
-      setNewInvoice({
-        notas: newInvoice.notas,
-        monto,
-        CAE,
-        fechaDeFactura,
-        numeroDeFactura,
-        periodo,
-        nombreArchivo,
-      });
-    }
+    setNewInvoice({
+      ...newInvoice,
+      nombreArchivo: file.name,
+    })
   }
 
   const closeDialog = (value: boolean) => {
@@ -152,6 +119,30 @@ export default function InvoiceHeader({ companies }: Props) {
               )
             }
             <div>
+              <Label htmlFor="concepto">Concepto</Label>
+              <input
+                id="concepto"
+                type="text"
+                value={newInvoice.concepto}
+                onChange={(e) => setNewInvoice({ ...newInvoice, concepto: e.target.value })}
+                className={cn(
+                  "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2"
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor="fecha">Fecha de Factura</Label>
+              <input
+                id="fecha"
+                type="date"
+                value={newInvoice.fecha.toISOString().split('T')[0]}
+                onChange={(e) => setNewInvoice({ ...newInvoice, fecha: new Date(e.target.value) })}
+                className={cn(
+                  "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2"
+                )}
+              />
+            </div>
+            <div>
               <Label htmlFor="note">Nota (opcional)</Label>
               <textarea
                 id="note"
@@ -162,11 +153,6 @@ export default function InvoiceHeader({ companies }: Props) {
                   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none",
                 )}
               />
-              {
-                haveInvoice && (
-                  <InvoiceInformation newInvoice={newInvoice} />
-                )
-              }
             </div>
             <Button className='bg-blue-600 hover:bg-blue-500 w-full' type="submit">Cargar</Button>
           </form>

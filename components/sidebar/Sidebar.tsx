@@ -34,6 +34,12 @@ const menuAdminItems = [
         title: 'Usuarios',
         subtitle: 'Gestion de usuarios'
     },
+    {
+        path: '/admin/invoices',
+        icon: <IoDocumentTextOutline size={40} />,
+        title: 'Mis Facturas',
+        subtitle: 'Mira todas las facturas aqui'
+    }
 ]
 
 const menuSuperAdmin = [

@@ -20,7 +20,12 @@ const PdfUploader = ({onFileChange}: Props) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'application/pdf': ['.pdf'] },
+    accept: {
+      'application/pdf': ['.pdf'],
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/webp': ['.webp'],
+    },
     multiple: false,
   });
 
