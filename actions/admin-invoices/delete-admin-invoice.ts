@@ -1,3 +1,5 @@
+'use server'
+
 import { auth } from "@/auth.config";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
@@ -11,6 +13,7 @@ export async function deleteAdminInvoice(invoiceId: string) {
     if (!user || user.rol !== 'admin') {
       return { message: 'No autorizado', code: '401', ok: false };
     }
+    console.log(invoiceId)
     // Eliminar la factura de la base de datos usando Prisma
     await prisma.adminInvoice.delete({
       where: {
@@ -19,6 +22,7 @@ export async function deleteAdminInvoice(invoiceId: string) {
     });
     return { message: 'Factura eliminada con éxito', code: '200', ok: true };
   } catch (error) {
+    console.log(error)
     // Verificar si el error es un error conocido de Prisma
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Puedes manejar errores específicos según su código

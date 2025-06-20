@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com'
       },
+      {
+        protocol: 'https',
+        hostname: 'invoices-test123.s3.us-east-1.amazonaws.com'
+      }
     ]
   }
 };
